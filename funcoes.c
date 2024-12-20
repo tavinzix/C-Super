@@ -53,6 +53,18 @@ void exibe(ListaProduto *lp){
     }
 }
 
+int quantidadeDeProdutos(ListaProduto lp){
+    int conta=0;
+    Nodo *pAux;
+    
+    pAux = lp.inicio;
+    while (pAux != NULL) {
+           conta++;
+           pAux = pAux->prox;
+    }
+    return(conta);
+}
+
 int vendaProduto(ListaProduto *lp, Produto *p, int cod, float qtd){
 	Nodo *atual = lp->inicio;
 
@@ -120,12 +132,40 @@ int excluiProduto(ListaProduto *lp, Produto *p, int cod){
     return CODIGO_INEXISTENTE;
 }
 
-int gravaArquivo(ListaProduto lp){
-	
+int gravaArquivo(ListaProduto *lp){
+	FILE *arq;
+    Nodo *pAux = lp->inicio;
+    arq = fopen("listaProduto.txt", "w");
+    fprintf(arq, "[codigo] [descricao] [preco]  [estoque]\n");
+
+    while (pAux != NULL) {
+        fprintf(arq, "%d %s %.2f %.2f\n", pAux->info.cod, pAux->info.nome, pAux->info.preco, pAux->info.estoque);
+        pAux = pAux->prox;
+    }
+    fclose(arq);
+    return SUCESSO;
 }
 
-int leArquivo(ListaProduto *lp){
-	
+int leArquivo(ListaProduto *lp) {
+    FILE *arq;
+    char dadosLista[200];
+    Produto p;
+
+    arq = fopen("listaProduto.txt", "r");
+
+    while (quantidadeDeProdutos(*lp) > 0) {
+        Produto temp;
+        excluiProduto(lp, &temp, lp->inicio->info.cod);
+    }
+
+    while (fgets(dadosLista, sizeof(dadosLista), arq)) {
+        if (sscanf(dadosLista, "%d %80s %f %f", &p.cod, p.nome, &p.preco, &p.estoque) == 4) {
+            cadastraProduto(lp, p);
+        }
+    }
+
+    fclose(arq);
+    return SUCESSO;
 }
 
 void barran(){

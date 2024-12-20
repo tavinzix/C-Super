@@ -33,13 +33,18 @@ void exibe(ListaProduto *lp);
 int vendaProduto(ListaProduto *lp, Produto *p, int cod, float qtd);
 
 int consultaPorCodigo(ListaProduto *lp, int cod);
+int quantidadeDeNodos(ListaProduto *lp);
+
 int excluiProduto(ListaProduto *lp, Produto *p, int cod);
 
 
 int vendaDiaria(ListaProduto *lp);
 int fechaCaixa(ListaProduto *lp);
-int gravaArquivo(ListaProduto lp);
+int gravaArquivo(ListaProduto *lp);
 int leArquivo(ListaProduto *lp);
+
+
+
 
 
 void barran();

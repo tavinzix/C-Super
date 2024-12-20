@@ -11,13 +11,24 @@ int main() {
     int menu;
     ListaProduto lp;
 
-    criaLista(&lp);
+    criaLista(&lp);	
+    leArquivo(&lp);
+    
+    printf("  ####              #####   ##  ##   #####    ######   #####\n");
+	printf(" ##  ##            ###      ##  ##   ##  ##   ##       ##  ##\n");
+	printf(" ##       ######    ###     ##  ##   ##  ##   ####     ##  ##\n");
+	printf(" ##                  ###    ##  ##   #####    ##       #####\n");
+	printf(" ##  ##               ###   ##  ##   ##       ##       ## ##\n");
+	printf(" ####              #####     ####    ##       ######   ##  ##\n");
+		
+	barran();
 
     do {
-        printf("\n=== Menu Principal ===\n");
+		printf("\n=== Menu Principal ===\n");    
         printf("0. Sair\n");
         printf("1. Funcoes Gerenciais\n");
         printf("2. PDV\n");
+        printf("3. debug\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &menu);
 
@@ -30,6 +41,10 @@ int main() {
                 limparTela();
                 menuPDV(&lp);
                 break;
+                
+            case 3:
+            	
+            	break;
         }
     } while (menu != 0);
 
@@ -42,16 +57,13 @@ void menuGerencial(ListaProduto *lp) {
 
     do {
         printf("\n === Funcoes Gerenciais === \n");
-        printf("0. Voltar ao menu principal\n");
-        
-        printf("\n\n\n quando entrar aqui ler os dados do txt. quando sair, gravar os dados\n\n\n");
-        
-        printf("1. Cadastrar Produto\n");
+        printf("0. Voltar ao menu principal\n");      
+        printf("1. Cadastrar Produto - Verificar nome com espaço\n");
         printf("2. Inserir Estoque\n");
         printf("3. Listar produtos cadastrados\n");
         printf("4. Busca produto especifico\n");
-        printf("5. Excluir produto\n");
-        printf("6. Analise de vendas\n");
+        printf("5. Excluir produto\n\n");
+        printf("6. Analise de vendas - NADA FEITO\n\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &menu);
 
@@ -66,14 +78,25 @@ void menuGerencial(ListaProduto *lp) {
 
                 printf("Preco: "); scanf("%f", &p.preco);
                 printf("Estoque: "); scanf("%f", &p.estoque);
-
-                if (cadastraProduto(lp, p) == SUCESSO) {
-                    limparTela();
-                    printf("Operacao Realizada com Sucesso!\n");
-                } else {
-                    limparTela();
-                    printf("Operacao NAO realizada: Faltou Memoria!\n");
-                }
+                
+                if(p.cod == 0){
+                	printf("impossivel cadastrar codigo 0\n");
+                	break;
+				}
+                
+                if(consultaPorCodigo(lp, p.cod) == CODIGO_INEXISTENTE){               	
+                	if (cadastraProduto(lp, p) == SUCESSO) {
+                    	limparTela();
+                    	printf("Operacao Realizada com Sucesso!\n");
+                    	gravaArquivo(lp);
+                	} else {
+                    	limparTela();
+                    	printf("Operacao NAO realizada: Faltou Memoria!\n");
+                	}
+				}else{
+					printf("Produto ja existe\n");
+				}
+				   
                 break;
 
             case 2:
@@ -85,6 +108,7 @@ void menuGerencial(ListaProduto *lp) {
                 } else {
                     limparTela();
                     printf("Estoque do item atualizado!\n");
+                    gravaArquivo(lp);
                 }
                 break;
 
@@ -112,7 +136,12 @@ void menuGerencial(ListaProduto *lp) {
 					limparTela();
 					printf("Produto excluido\n\n");
 					printf("Cod: %d\nDescricao: %s\nPreco: %.2f\nEstoque %.2f\n", p.cod, p.nome, p.preco, p.estoque);
+					gravaArquivo(lp);
 				}
+				break;
+			
+			case 6:
+				//ler dados do arquivo de venda
 				break;
         }
     } while (menu != 0);
@@ -128,8 +157,8 @@ void menuPDV(ListaProduto *lp) {
         
         printf("\n\n\n pra empilhar vendas - gravar arquivo com a data e ter opcao de ver vendas de outro dia\n\n\n");
         
-        printf("1. Vender Produto\n");
-        printf("2. Fechar Caixa\n");
+        printf("1. Vender Produto - empilhar vendas\n");
+        printf("2. Fechar Caixa - NADA FEITO\n");
         printf("3. Listar produtos cadastrados\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &menu);
@@ -154,6 +183,7 @@ void menuPDV(ListaProduto *lp) {
 			            printf("Produto nao encontrado\n");
 			        } else if(resultado == SUCESSO){           
 			            printf("Produto vendido com sucesso\n");
+			            gravaArquivo(lp);
 			        }
 			    }
                 break;
@@ -166,7 +196,6 @@ void menuPDV(ListaProduto *lp) {
                 limparTela();
                 exibe(lp);
                 break;
-
         }
     } while (menu != 0);
 }
