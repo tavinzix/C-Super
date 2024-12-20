@@ -14,7 +14,7 @@ int main() {
     criaLista(&lp);	
     leArquivo(&lp);
     
-    printf("  ####              #####   ##  ##   #####    ######   #####\n");
+    	printf("  ####              #####   ##  ##   #####    ######   #####\n");
 	printf(" ##  ##            ###      ##  ##   ##  ##   ##       ##  ##\n");
 	printf(" ##       ######    ###     ##  ##   ##  ##   ####     ##  ##\n");
 	printf(" ##                  ###    ##  ##   #####    ##       #####\n");
@@ -58,7 +58,7 @@ void menuGerencial(ListaProduto *lp) {
     do {
         printf("\n === Funcoes Gerenciais === \n");
         printf("0. Voltar ao menu principal\n");      
-        printf("1. Cadastrar Produto - Verificar nome com espaço\n");
+        printf("1. Cadastrar Produto - Verificar nome com espaÃ§o\n");
         printf("2. Inserir Estoque\n");
         printf("3. Listar produtos cadastrados\n");
         printf("4. Busca produto especifico\n");
