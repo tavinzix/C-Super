@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "header.h"
 
 void criaLista(ListaProduto *lp){
 	lp->inicio = NULL;
+}
+
+void criaPilha(PilhaProduto *pp) {
+    pp->topo = NULL;
 }
 
 int cadastraProduto(ListaProduto *lp, Produto p){
@@ -65,16 +70,22 @@ int quantidadeDeProdutos(ListaProduto lp){
     return(conta);
 }
 
-int vendaProduto(ListaProduto *lp, Produto *p, int cod, float qtd){
+int vendaProduto(ListaProduto *lp, PilhaProduto *pp, Produto *p, int cod, float qtd){
 	Nodo *atual = lp->inicio;
 
     while (atual != NULL) {
         if (atual->info.cod == cod) {
             if (atual->info.estoque >= qtd) {
                 atual->info.estoque -= qtd;
+                
+				*p = atual->info;
+                p->estoque = qtd;                
+                Produto venda = *p;
+                vendaDiaria(pp, venda);
+                                
                 return SUCESSO;
-            } else {
-            	printf("Estoque insuficiente para venda\n");
+            } else{
+			  	printf("Estoque insuficiente para venda\n");
             	printf("Estoque disponivel: %f\n", atual->info.estoque);
                 return SEM_ESTOQUE;
             }
@@ -82,8 +93,6 @@ int vendaProduto(ListaProduto *lp, Produto *p, int cod, float qtd){
         atual = atual->prox;
     }
     return CODIGO_INEXISTENTE;
-    
-    //empilhar vendas
 }
 
 int consultaPorCodigo(ListaProduto *lp, int cod){
@@ -102,8 +111,34 @@ int consultaPorCodigo(ListaProduto *lp, int cod){
 	return CODIGO_INEXISTENTE;
 }
 
-int vendaDiaria(ListaProduto *lp){
-	//le vendas do dia e mostra dados do item ou total- lendo txt
+int vendaDiaria(PilhaProduto *pp, Produto p) {
+    Nodo *novoNodo = (Nodo *)malloc(sizeof(Nodo));
+    if (novoNodo == NULL) {
+        return FALTOU_MEMORIA;
+    }
+		
+	novoNodo->info = p;
+    novoNodo->prox = pp->topo;
+    pp->topo = novoNodo;
+
+    return SUCESSO;
+}
+
+void listaVendas(PilhaProduto *pp) {
+	float totalVenda;
+    if (pp == NULL || pp->topo == NULL) {
+        printf("Nenhuma venda registrada.\n");
+        return;
+    }
+
+    Nodo *atual = pp->topo;
+    printf("Vendas registradas:\n");
+    while (atual != NULL) {
+        printf("Codigo: %d, Nome: %s, Quantidade vendida: %.2f, Preco unitario: %.2f\n\n", atual->info.cod, atual->info.nome, atual->info.estoque, atual->info.preco);
+        totalVenda += (atual->info.preco * atual->info.estoque);
+        atual = atual->prox;
+    }
+    printf("Vendas totais: %f", totalVenda);
 }
 
 int fechaCaixa(ListaProduto *lp){
@@ -167,6 +202,30 @@ int leArquivo(ListaProduto *lp) {
     fclose(arq);
     return SUCESSO;
 }
+
+
+void data(){
+	struct tm *p;
+    time_t seconds;
+
+    time(&seconds);
+    p = localtime(&seconds);
+
+    printf("Dia do ano: %d\n", p->tm_yday);
+    printf("Data: %d/%d/%d\n", p->tm_mday, p->tm_mon + 1, p->tm_year + 1900);
+    printf("Hora: %d:%d:%d\n", p->tm_hour, p->tm_min, p->tm_sec);
+
+    printf("\nGeral: %s\n", ctime(&seconds));
+}
+
+
+
+
+
+
+
+
+
 
 void barran(){
 	printf("\n\n");

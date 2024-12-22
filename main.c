@@ -2,19 +2,23 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <time.h>
+
 #include "header.h"
 
-void menuGerencial(ListaProduto *lp);
-void menuPDV(ListaProduto *lp);
+void menuGerencial(ListaProduto *lp, PilhaProduto *pp);
+void menuPDV(ListaProduto *lp, PilhaProduto *pp);
 
 int main() {
     int menu;
     ListaProduto lp;
+    PilhaProduto pp;
 
     criaLista(&lp);	
+    criaPilha(&pp);
     leArquivo(&lp);
     
-    	printf("  ####              #####   ##  ##   #####    ######   #####\n");
+    printf("  ####              #####   ##  ##   #####    ######   #####\n");
 	printf(" ##  ##            ###      ##  ##   ##  ##   ##       ##  ##\n");
 	printf(" ##       ######    ###     ##  ##   ##  ##   ####     ##  ##\n");
 	printf(" ##                  ###    ##  ##   #####    ##       #####\n");
@@ -35,15 +39,15 @@ int main() {
         switch (menu) {
             case 1:
                 limparTela();
-                menuGerencial(&lp);
+                menuGerencial(&lp, &pp);
                 break;
             case 2:
                 limparTela();
-                menuPDV(&lp);
+                menuPDV(&lp, &pp);
                 break;
                 
             case 3:
-            	
+            	data();
             	break;
         }
     } while (menu != 0);
@@ -51,14 +55,14 @@ int main() {
     return 0;
 }
 
-void menuGerencial(ListaProduto *lp) {
+void menuGerencial(ListaProduto *lp, PilhaProduto *pp) {
     int menu, cod;
     Produto p;
 
     do {
         printf("\n === Funcoes Gerenciais === \n");
         printf("0. Voltar ao menu principal\n");      
-        printf("1. Cadastrar Produto - Verificar nome com espaço\n");
+        printf("1. Cadastrar Produto - Verificar nome com espaco\n");
         printf("2. Inserir Estoque\n");
         printf("3. Listar produtos cadastrados\n");
         printf("4. Busca produto especifico\n");
@@ -147,7 +151,7 @@ void menuGerencial(ListaProduto *lp) {
     } while (menu != 0);
 }
 
-void menuPDV(ListaProduto *lp) {
+void menuPDV(ListaProduto *lp, PilhaProduto *pp) {
     int menu, cod;
     float qtd;
     Produto p;
@@ -158,8 +162,9 @@ void menuPDV(ListaProduto *lp) {
         printf("\n\n\n pra empilhar vendas - gravar arquivo com a data e ter opcao de ver vendas de outro dia\n\n\n");
         
         printf("1. Vender Produto - empilhar vendas\n");
-        printf("2. Fechar Caixa - NADA FEITO\n");
+        printf("2. Listar Vendas - NADA FEITO\n");
         printf("3. Listar produtos cadastrados\n");
+        printf("4. debug\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &menu);
 
@@ -176,7 +181,13 @@ void menuPDV(ListaProduto *lp) {
 
 			        printf("Digite a quantidade: "); scanf("%f", &qtd);
 			        
-			        int resultado = vendaProduto(lp, &p, cod, qtd);
+			        if(qtd <= 0){
+			        	limparTela();
+			        	printf("Informe uma quantidade valida\n");
+			        	break;
+					}
+			        
+			        int resultado = vendaProduto(lp, pp, &p, cod, qtd);
 			
 			        if (resultado == CODIGO_INEXISTENTE) {
 			            limparTela();
@@ -189,13 +200,18 @@ void menuPDV(ListaProduto *lp) {
                 break;
 
             case 2:
-                printf("Fechar Caixa\n");
+                limparTela();
+                listaVendas(pp);
                 break;
 
             case 3:
                 limparTela();
                 exibe(lp);
                 break;
+                
+            case 4:
+            	
+			    break;
         }
     } while (menu != 0);
 }
