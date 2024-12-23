@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include <time.h>
 #include "header.h"
 
@@ -33,7 +35,7 @@ int cadastraProduto(ListaProduto *lp, Produto p){
     }
 }
 
-int lancaNota(ListaProduto *lp, int cod){
+int atualizaEstoque(ListaProduto *lp, int cod){
 	float estoque;
 	Nodo *atual = lp->inicio;
 
@@ -48,7 +50,7 @@ int lancaNota(ListaProduto *lp, int cod){
     return CODIGO_INEXISTENTE;
 }
 
-void exibe(ListaProduto *lp){
+void listaProdutos(ListaProduto *lp){
 	 Nodo *pAux = lp->inicio;
     printf("Cadastro de produtos:\n");
     printf("[codigo] [descricao] [preco]  [estoque]\n");
@@ -58,11 +60,23 @@ void exibe(ListaProduto *lp){
     }
 }
 
-int quantidadeDeProdutos(ListaProduto lp){
+int quantidadeProdutos(ListaProduto *lp){
     int conta=0;
     Nodo *pAux;
     
-    pAux = lp.inicio;
+    pAux = lp->inicio;
+    while (pAux != NULL) {
+           conta++;
+           pAux = pAux->prox;
+    }
+    return(conta);
+}
+
+int quantidadeVendas(PilhaProduto *pp){
+    int conta=0;
+    Nodo *pAux;
+    
+    pAux = pp->topo;
     while (pAux != NULL) {
            conta++;
            pAux = pAux->prox;
@@ -82,7 +96,8 @@ int vendaProduto(ListaProduto *lp, PilhaProduto *pp, Produto *p, int cod, float 
                 p->estoque = qtd;                
                 Produto venda = *p;
                 vendaDiaria(pp, venda);
-                                
+            	gravaVenda(pp);
+				              
                 return SUCESSO;
             } else{
 			  	printf("Estoque insuficiente para venda\n");
@@ -167,7 +182,7 @@ int excluiProduto(ListaProduto *lp, Produto *p, int cod){
     return CODIGO_INEXISTENTE;
 }
 
-int gravaArquivo(ListaProduto *lp){
+int gravaProduto(ListaProduto *lp){
 	FILE *arq;
     Nodo *pAux = lp->inicio;
     arq = fopen("listaProduto.txt", "w");
@@ -181,14 +196,79 @@ int gravaArquivo(ListaProduto *lp){
     return SUCESSO;
 }
 
-int leArquivo(ListaProduto *lp) {
+int leProduto(ListaProduto *lp) {
     FILE *arq;
     char dadosLista[200];
     Produto p;
 
     arq = fopen("listaProduto.txt", "r");
 
-    while (quantidadeDeProdutos(*lp) > 0) {
+    while (quantidadeProdutos(lp) > 0) {
+        Produto temp;
+        excluiProduto(lp, &temp, lp->inicio->info.cod);
+    }
+
+    while (fgets(dadosLista, sizeof(dadosLista), arq)) {
+        if (sscanf(dadosLista, "%d %80s %f %f", &p.cod, p.nome, &p.preco, &p.estoque) == 4) {
+            cadastraProduto(lp, p);
+        }
+    }
+
+    fclose(arq);
+    return SUCESSO;
+}
+
+int gravaVenda(PilhaProduto *pp){	
+	float totalVenda;
+	FILE *arq;
+    Nodo *atual = pp->topo;
+
+ 	struct tm *p;
+    char data[9];
+    time_t seconds;
+
+    time(&seconds);
+    p = localtime(&seconds);
+
+    sprintf(data, "%02d%02d%04d", p->tm_mday, p->tm_mon + 1, p->tm_year + 1900);
+	strcat(data, ".txt");
+  
+    arq = fopen(data, "w");
+    
+    fprintf(arq, "[codigo] [descricao] [qtd vendida] [preco]\n");
+
+    while (atual != NULL) {
+        fprintf(arq, "%d %s %.2f %.2f\n", atual->info.cod, atual->info.nome, atual->info.estoque, atual->info.preco);
+        totalVenda += (atual->info.preco * atual->info.estoque);
+        atual = atual->prox;
+    }
+    
+    fprintf(arq, "%f", totalVenda);
+    
+    fclose(arq);
+    return SUCESSO;
+}
+
+
+//parei aqui
+int leVendas(PilhaProduto *pp) {
+    FILE *arq;
+    char dadosLista[200];
+    Produto p;
+    
+    struct tm *pData;
+    char data[9];
+    time_t seconds;
+
+    time(&seconds);
+    pData = localtime(&seconds);
+
+    sprintf(data, "%02d%02d%04d", pData->tm_mday, pData->tm_mon + 1, pData->tm_year + 1900);
+	strcat(data, ".txt");
+
+    arq = fopen(data, "r");
+
+    while (quantidadeVendas(pp) > 0) {
         Produto temp;
         excluiProduto(lp, &temp, lp->inicio->info.cod);
     }
@@ -204,31 +284,12 @@ int leArquivo(ListaProduto *lp) {
 }
 
 
-void data(){
-	struct tm *p;
-    time_t seconds;
-
-    time(&seconds);
-    p = localtime(&seconds);
-
-    printf("Dia do ano: %d\n", p->tm_yday);
-    printf("Data: %d/%d/%d\n", p->tm_mday, p->tm_mon + 1, p->tm_year + 1900);
-    printf("Hora: %d:%d:%d\n", p->tm_hour, p->tm_min, p->tm_sec);
-
-    printf("\nGeral: %s\n", ctime(&seconds));
-}
-
-
-
-
-
-
 
 
 
 
 void barran(){
-	printf("\n\n");
+	printf("\n\n\n");
 }
 
 void limparTela() {

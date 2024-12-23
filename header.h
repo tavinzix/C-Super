@@ -7,8 +7,6 @@
 #define CODIGO_INEXISTENTE 3
 #define SEM_ESTOQUE 4
 
-#define PILHA_VAZIA 5
-
 typedef struct {
     int cod;
     char nome[50];
@@ -29,20 +27,17 @@ typedef struct {
 
 typedef struct {
 	Nodo *topo;
-
 } PilhaProduto;
 
 void criaLista(ListaProduto *lp);
 void criaPilha(PilhaProduto *pp);
-
-
 int cadastraProduto(ListaProduto *lp, Produto p);
-int lancaNota(ListaProduto *lp, int cod);
-void exibe(ListaProduto *lp);
+int atualizaEstoque(ListaProduto *lp, int cod);
+void listaProdutos(ListaProduto *lp);
 int consultaPorCodigo(ListaProduto *lp, int cod);
-int quantidadeDeNodos(ListaProduto *lp);
+int quantidadeProdutos(ListaProduto *lp);
+int quantidadeVendas(PilhaProduto *pp);
 int excluiProduto(ListaProduto *lp, Produto *p, int cod);
-
 int vendaProduto(ListaProduto *lp, PilhaProduto *pp, Produto *p, int cod, float qtd);
 
 
@@ -51,10 +46,11 @@ void listaVendas(PilhaProduto *pp);
 
 
 //int fechaCaixa(ListaProduto *lp);
-int gravaArquivo(ListaProduto *lp);
-int leArquivo(ListaProduto *lp);
+int gravaProduto(ListaProduto *lp);
+int gravaVenda(PilhaProduto *pp);
+int leProduto(ListaProduto *lp);
+int leVendas(PilhaProduto *pp);
 
-void data();
 
 void barran();
 void limparTela();

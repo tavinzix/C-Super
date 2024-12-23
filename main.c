@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <time.h>
-
 #include "header.h"
 
 void menuGerencial(ListaProduto *lp, PilhaProduto *pp);
@@ -16,7 +14,8 @@ int main() {
 
     criaLista(&lp);	
     criaPilha(&pp);
-    leArquivo(&lp);
+    leProduto(&lp);
+    leVendas(&pp);
     
     printf("  ####              #####   ##  ##   #####    ######   #####\n");
 	printf(" ##  ##            ###      ##  ##   ##  ##   ##       ##  ##\n");
@@ -47,7 +46,7 @@ int main() {
                 break;
                 
             case 3:
-            	data();
+            	//data();
             	break;
         }
     } while (menu != 0);
@@ -67,7 +66,7 @@ void menuGerencial(ListaProduto *lp, PilhaProduto *pp) {
         printf("3. Listar produtos cadastrados\n");
         printf("4. Busca produto especifico\n");
         printf("5. Excluir produto\n\n");
-        printf("6. Analise de vendas - NADA FEITO\n\n");
+        printf("6. Analise de vendas - LISTAR VENDAS PELO TXT\n\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &menu);
 
@@ -92,7 +91,7 @@ void menuGerencial(ListaProduto *lp, PilhaProduto *pp) {
                 	if (cadastraProduto(lp, p) == SUCESSO) {
                     	limparTela();
                     	printf("Operacao Realizada com Sucesso!\n");
-                    	gravaArquivo(lp);
+                    	gravaProduto(lp);
                 	} else {
                     	limparTela();
                     	printf("Operacao NAO realizada: Faltou Memoria!\n");
@@ -106,19 +105,19 @@ void menuGerencial(ListaProduto *lp, PilhaProduto *pp) {
             case 2:
                 printf("Digite o codigo: "); scanf("%d", &cod);
 
-                if (lancaNota(lp, cod) == CODIGO_INEXISTENTE) {
+                if (atualizaEstoque(lp, cod) == CODIGO_INEXISTENTE) {
                     limparTela();
                     printf("Produto nao encontrado\n");
                 } else {
                     limparTela();
                     printf("Estoque do item atualizado!\n");
-                    gravaArquivo(lp);
+                    gravaProduto(lp);
                 }
                 break;
 
             case 3:
                 limparTela();
-                exibe(lp);
+                listaProdutos(lp);
                 break;
 
             case 4:
@@ -140,7 +139,7 @@ void menuGerencial(ListaProduto *lp, PilhaProduto *pp) {
 					limparTela();
 					printf("Produto excluido\n\n");
 					printf("Cod: %d\nDescricao: %s\nPreco: %.2f\nEstoque %.2f\n", p.cod, p.nome, p.preco, p.estoque);
-					gravaArquivo(lp);
+					gravaProduto(lp);
 				}
 				break;
 			
@@ -161,8 +160,8 @@ void menuPDV(ListaProduto *lp, PilhaProduto *pp) {
         
         printf("\n\n\n pra empilhar vendas - gravar arquivo com a data e ter opcao de ver vendas de outro dia\n\n\n");
         
-        printf("1. Vender Produto - empilhar vendas\n");
-        printf("2. Listar Vendas - NADA FEITO\n");
+        printf("1. Vender Produto - SALVAR PILHA EM TXT\n");
+        printf("2. Listar Vendas - LISTAR VENDAS NA DATA\n");
         printf("3. Listar produtos cadastrados\n");
         printf("4. debug\n");
         printf("Escolha uma opcao: ");
@@ -194,19 +193,19 @@ void menuPDV(ListaProduto *lp, PilhaProduto *pp) {
 			            printf("Produto nao encontrado\n");
 			        } else if(resultado == SUCESSO){           
 			            printf("Produto vendido com sucesso\n");
-			            gravaArquivo(lp);
+			            gravaProduto(lp);
 			        }
 			    }
                 break;
 
             case 2:
                 limparTela();
-                listaVendas(pp);
+                //listaVendas(pp);
                 break;
 
             case 3:
                 limparTela();
-                exibe(lp);
+                listaProdutos(lp);
                 break;
                 
             case 4:
