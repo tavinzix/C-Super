@@ -47,6 +47,7 @@ int main() {
                 
             case 3:
             	//data();
+            	
             	break;
         }
     } while (menu != 0);
@@ -56,6 +57,7 @@ int main() {
 
 void menuGerencial(ListaProduto *lp, PilhaProduto *pp) {
     int menu, cod;
+    char data[9];
     Produto p;
 
     do {
@@ -144,7 +146,15 @@ void menuGerencial(ListaProduto *lp, PilhaProduto *pp) {
 				break;
 			
 			case 6:
-				//ler dados do arquivo de venda
+				printf("Digite a data que deseja buscar as vendas\nFormato DDMMYYYY\n\n"); scanf("%s", data);
+				
+				if(buscaVendas(pp, data) == LISTA_VAZIA){
+					limparTela();
+					printf("Nao foram encontradas vendas no dia informado");
+				}else{
+					limparTela();
+					printf("Vendas registradas:\n");
+				}
 				break;
         }
     } while (menu != 0);
@@ -157,11 +167,8 @@ void menuPDV(ListaProduto *lp, PilhaProduto *pp) {
     do {
         printf("\n === PDV === \n");
         printf("0. Voltar ao Menu Principal\n");
-        
-        printf("\n\n\n pra empilhar vendas - gravar arquivo com a data e ter opcao de ver vendas de outro dia\n\n\n");
-        
-        printf("1. Vender Produto - SALVAR PILHA EM TXT\n");
-        printf("2. Listar Vendas - LISTAR VENDAS NA DATA\n");
+      	printf("1. Vender Produto\n");
+        printf("2. Listar Vendas\n");
         printf("3. Listar produtos cadastrados\n");
         printf("4. debug\n");
         printf("Escolha uma opcao: ");
@@ -169,7 +176,7 @@ void menuPDV(ListaProduto *lp, PilhaProduto *pp) {
 
         switch (menu) {
             case 1:
-            	printf("Digite o codigo do produto e a quantidade. Para encerrar, digite 0.\n\n");   
+            	printf("\nDigite o codigo do produto e a quantidade.\nPara encerrar, digite 0.\n\n");   
                 
                 while (1) {
 			      	printf("Codigo do item: "); scanf("%d", &cod);
@@ -200,7 +207,7 @@ void menuPDV(ListaProduto *lp, PilhaProduto *pp) {
 
             case 2:
                 limparTela();
-                //listaVendas(pp);
+                listaVendas(pp);
                 break;
 
             case 3:
@@ -214,4 +221,3 @@ void menuPDV(ListaProduto *lp, PilhaProduto *pp) {
         }
     } while (menu != 0);
 }
-

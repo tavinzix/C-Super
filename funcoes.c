@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <time.h>
+
 #include "header.h"
 
 void criaLista(ListaProduto *lp){
@@ -72,18 +72,6 @@ int quantidadeProdutos(ListaProduto *lp){
     return(conta);
 }
 
-int quantidadeVendas(PilhaProduto *pp){
-    int conta=0;
-    Nodo *pAux;
-    
-    pAux = pp->topo;
-    while (pAux != NULL) {
-           conta++;
-           pAux = pAux->prox;
-    }
-    return(conta);
-}
-
 int vendaProduto(ListaProduto *lp, PilhaProduto *pp, Produto *p, int cod, float qtd){
 	Nodo *atual = lp->inicio;
 
@@ -141,7 +129,7 @@ int vendaDiaria(PilhaProduto *pp, Produto p) {
 
 void listaVendas(PilhaProduto *pp) {
 	float totalVenda;
-    if (pp == NULL || pp->topo == NULL) {
+    if (pp->topo == NULL) {
         printf("Nenhuma venda registrada.\n");
         return;
     }
@@ -154,10 +142,6 @@ void listaVendas(PilhaProduto *pp) {
         atual = atual->prox;
     }
     printf("Vendas totais: %f", totalVenda);
-}
-
-int fechaCaixa(ListaProduto *lp){
-	//soma as vendas do dia
 }
 
 int excluiProduto(ListaProduto *lp, Produto *p, int cod){
@@ -181,6 +165,43 @@ int excluiProduto(ListaProduto *lp, Produto *p, int cod){
     }
     return CODIGO_INEXISTENTE;
 }
+
+//parei aqui
+int buscaVendas(PilhaProduto *pp, char data[9]) {	
+	FILE *arq;
+	Nodo *atual = pp->topo;
+    char dadosPilha[200];
+    Produto p;
+    float totalVenda;
+
+    strcat(data, ".txt");
+
+    arq = fopen(data, "r");
+    
+     if (arq == NULL) {
+        return LISTA_VAZIA;
+    }
+
+    while (fgets(dadosPilha, sizeof(dadosPilha), arq)) {
+        if (sscanf(dadosPilha, "%d %s %f %f", &p.cod, p.nome, &p.estoque, &p.preco) == 4) {
+            atual.info = p;
+        }
+        atual = atual->prox;
+    }
+
+    fclose(arq);
+
+    Nodo *atual = pp->topo;
+    
+    while (atual != NULL) {
+        printf("Codigo: %d, Nome: %s, Quantidade vendida: %.2f, Preco unitario: %.2f\n\n", atual->info.cod, atual->info.nome, atual->info.estoque, atual->info.preco);
+        totalVenda += (atual->info.preco * atual->info.estoque);
+        atual = atual->prox;
+    }
+    printf("Vendas totais: %f", totalVenda);
+    return SUCESSO;
+}
+
 
 int gravaProduto(ListaProduto *lp){
 	FILE *arq;
@@ -218,8 +239,7 @@ int leProduto(ListaProduto *lp) {
     return SUCESSO;
 }
 
-int gravaVenda(PilhaProduto *pp){	
-	float totalVenda;
+int gravaVenda(PilhaProduto *pp){
 	FILE *arq;
     Nodo *atual = pp->topo;
 
@@ -239,53 +259,38 @@ int gravaVenda(PilhaProduto *pp){
 
     while (atual != NULL) {
         fprintf(arq, "%d %s %.2f %.2f\n", atual->info.cod, atual->info.nome, atual->info.estoque, atual->info.preco);
-        totalVenda += (atual->info.preco * atual->info.estoque);
         atual = atual->prox;
     }
-    
-    fprintf(arq, "%f", totalVenda);
     
     fclose(arq);
     return SUCESSO;
 }
 
-
-//parei aqui
 int leVendas(PilhaProduto *pp) {
     FILE *arq;
-    char dadosLista[200];
+    char dadosPilha[200];
     Produto p;
-    
+
     struct tm *pData;
     char data[9];
     time_t seconds;
 
     time(&seconds);
     pData = localtime(&seconds);
-
     sprintf(data, "%02d%02d%04d", pData->tm_mday, pData->tm_mon + 1, pData->tm_year + 1900);
-	strcat(data, ".txt");
+    strcat(data, ".txt");
 
     arq = fopen(data, "r");
 
-    while (quantidadeVendas(pp) > 0) {
-        Produto temp;
-        excluiProduto(lp, &temp, lp->inicio->info.cod);
-    }
-
-    while (fgets(dadosLista, sizeof(dadosLista), arq)) {
-        if (sscanf(dadosLista, "%d %80s %f %f", &p.cod, p.nome, &p.preco, &p.estoque) == 4) {
-            cadastraProduto(lp, p);
+    while (fgets(dadosPilha, sizeof(dadosPilha), arq)) {
+        if (sscanf(dadosPilha, "%d %s %f %f", &p.cod, p.nome, &p.estoque, &p.preco) == 4) {
+            vendaDiaria(pp, p);
         }
     }
 
     fclose(arq);
     return SUCESSO;
 }
-
-
-
-
 
 
 void barran(){

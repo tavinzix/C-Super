@@ -34,18 +34,16 @@ void criaPilha(PilhaProduto *pp);
 int cadastraProduto(ListaProduto *lp, Produto p);
 int atualizaEstoque(ListaProduto *lp, int cod);
 void listaProdutos(ListaProduto *lp);
+void listaVendas(PilhaProduto *pp);
 int consultaPorCodigo(ListaProduto *lp, int cod);
 int quantidadeProdutos(ListaProduto *lp);
-int quantidadeVendas(PilhaProduto *pp);
 int excluiProduto(ListaProduto *lp, Produto *p, int cod);
 int vendaProduto(ListaProduto *lp, PilhaProduto *pp, Produto *p, int cod, float qtd);
-
-
 int vendaDiaria(PilhaProduto *pp, Produto p);
-void listaVendas(PilhaProduto *pp);
+int buscaVendas(PilhaProduto *pp, char data[9]);
 
 
-//int fechaCaixa(ListaProduto *lp);
+
 int gravaProduto(ListaProduto *lp);
 int gravaVenda(PilhaProduto *pp);
 int leProduto(ListaProduto *lp);
