@@ -41,16 +41,10 @@ int excluiProduto(ListaProduto *lp, Produto *p, int cod);
 int vendaProduto(ListaProduto *lp, PilhaProduto *pp, Produto *p, int cod, float qtd);
 int vendaDiaria(PilhaProduto *pp, Produto p);
 int buscaVendas(PilhaProduto *pp, char data[9]);
-
-
-
 int gravaProduto(ListaProduto *lp);
 int gravaVenda(PilhaProduto *pp);
 int leProduto(ListaProduto *lp);
 int leVendas(PilhaProduto *pp);
-
-
-void barran();
 void limparTela();
 
 #endif

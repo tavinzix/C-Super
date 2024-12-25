@@ -24,14 +24,11 @@ int main() {
 	printf(" ##  ##               ###   ##  ##   ##       ##       ## ##\n");
 	printf(" ####              #####     ####    ##       ######   ##  ##\n");
 		
-	barran();
-
     do {
 		printf("\n=== Menu Principal ===\n");    
         printf("0. Sair\n");
         printf("1. Funcoes Gerenciais\n");
         printf("2. PDV\n");
-        printf("3. debug\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &menu);
 
@@ -44,11 +41,6 @@ int main() {
                 limparTela();
                 menuPDV(&lp, &pp);
                 break;
-                
-            case 3:
-            	//data();
-            	
-            	break;
         }
     } while (menu != 0);
 
@@ -63,12 +55,12 @@ void menuGerencial(ListaProduto *lp, PilhaProduto *pp) {
     do {
         printf("\n === Funcoes Gerenciais === \n");
         printf("0. Voltar ao menu principal\n");      
-        printf("1. Cadastrar Produto - Verificar nome com espaco\n");
+        printf("1. Cadastrar Produto\n");
         printf("2. Inserir Estoque\n");
         printf("3. Listar produtos cadastrados\n");
         printf("4. Busca produto especifico\n");
-        printf("5. Excluir produto\n\n");
-        printf("6. Analise de vendas - LISTAR VENDAS PELO TXT\n\n");
+        printf("5. Excluir produto\n");
+        printf("6. Analise de vendas\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &menu);
 
@@ -148,12 +140,13 @@ void menuGerencial(ListaProduto *lp, PilhaProduto *pp) {
 			case 6:
 				printf("Digite a data que deseja buscar as vendas\nFormato DDMMYYYY\n\n"); scanf("%s", data);
 				
-				if(buscaVendas(pp, data) == LISTA_VAZIA){
-					limparTela();
-					printf("Nao foram encontradas vendas no dia informado");
-				}else{
-					limparTela();
-					printf("Vendas registradas:\n");
+				int resultado = buscaVendas(pp, data);
+
+				if (resultado == LISTA_VAZIA) {
+    				limparTela();
+   					printf("Nao foram encontradas vendas no dia informado\n");
+				} else if(resultado == FALTOU_MEMORIA){
+					printf("Nao foi possivel buscar as vendas");
 				}
 				break;
         }
@@ -170,7 +163,6 @@ void menuPDV(ListaProduto *lp, PilhaProduto *pp) {
       	printf("1. Vender Produto\n");
         printf("2. Listar Vendas\n");
         printf("3. Listar produtos cadastrados\n");
-        printf("4. debug\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &menu);
 
@@ -214,10 +206,6 @@ void menuPDV(ListaProduto *lp, PilhaProduto *pp) {
                 limparTela();
                 listaProdutos(lp);
                 break;
-                
-            case 4:
-            	
-			    break;
         }
     } while (menu != 0);
 }

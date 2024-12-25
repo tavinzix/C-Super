@@ -105,7 +105,7 @@ int consultaPorCodigo(ListaProduto *lp, int cod){
 			limparTela();
 			printf("Dados do item %d\n\n", cod);
 			printf("Descricao: %s\n", atual->info.nome);
-			printf("Preco: %2.f\n", atual->info.preco);
+			printf("Preco: %.2f\n", atual->info.preco);
 			printf("Estoque: %f\n", atual->info.estoque);
 			return SUCESSO;
 		}
@@ -166,42 +166,57 @@ int excluiProduto(ListaProduto *lp, Produto *p, int cod){
     return CODIGO_INEXISTENTE;
 }
 
-//parei aqui
-int buscaVendas(PilhaProduto *pp, char data[9]) {	
-	FILE *arq;
-	Nodo *atual = pp->topo;
+int buscaVendas(PilhaProduto *pp, char data[9]) {
+    FILE *arq;
     char dadosPilha[200];
     Produto p;
-    float totalVenda;
+    float totalVenda = 0.0;
+    Nodo *atual = pp->topo;
+    Nodo *temp;
+    
+    while (atual != NULL) {
+        temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+    pp->topo = NULL;
 
     strcat(data, ".txt");
-
     arq = fopen(data, "r");
-    
-     if (arq == NULL) {
+
+    if (arq == NULL) {
         return LISTA_VAZIA;
     }
 
     while (fgets(dadosPilha, sizeof(dadosPilha), arq)) {
-        if (sscanf(dadosPilha, "%d %s %f %f", &p.cod, p.nome, &p.estoque, &p.preco) == 4) {
-            atual.info = p;
+        if (sscanf(dadosPilha, "%d %49s %f %f", &p.cod, p.nome, &p.estoque, &p.preco) == 4) {
+            Nodo *novo = (Nodo *)malloc(sizeof(Nodo));
+            if (novo == NULL) {
+                fclose(arq);
+                return FALTOU_MEMORIA;
+            }
+
+            novo->info = p;
+            novo->prox = pp->topo;
+            pp->topo = novo;
         }
-        atual = atual->prox;
     }
 
     fclose(arq);
 
-    Nodo *atual = pp->topo;
-    
+    atual = pp->topo;
+
+	limparTela();
+    printf("Vendas registradas:\n");
     while (atual != NULL) {
-        printf("Codigo: %d, Nome: %s, Quantidade vendida: %.2f, Preco unitario: %.2f\n\n", atual->info.cod, atual->info.nome, atual->info.estoque, atual->info.preco);
-        totalVenda += (atual->info.preco * atual->info.estoque);
+        printf("Codigo: %d, Nome: %s, Quantidade vendida: %.2f, Preco unitario: %.2f\n", atual->info.cod, atual->info.nome, atual->info.estoque, atual->info.preco);
+        totalVenda += atual->info.preco * atual->info.estoque;
         atual = atual->prox;
     }
-    printf("Vendas totais: %f", totalVenda);
+    printf("Vendas totais: %.2f\n", totalVenda);
+
     return SUCESSO;
 }
-
 
 int gravaProduto(ListaProduto *lp){
 	FILE *arq;
@@ -292,15 +307,8 @@ int leVendas(PilhaProduto *pp) {
     return SUCESSO;
 }
 
-
-void barran(){
-	printf("\n\n\n");
-}
-
 void limparTela() {
-//	printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-
-   	#ifdef _WIN32
+ 	#ifdef _WIN32
        system("cls");
     #else
         system("clear");
